@@ -19,7 +19,12 @@
    python3 -m pip install requests
    ```
 
-4. **Create Configuration File**  
+4. **Create Project Folder**
+   ```bash
+   mkdir -p ~/radarr_cleanup
+   cd ~/radarr_cleanup
+
+5. **Create Configuration File**
    ```bash
    nano config.json
    ```
@@ -34,13 +39,16 @@
    ```
    ^O to save, ^X to exit
 
-5. **Download Script**  
+6. **Download Script**
    ```bash
    curl -O https://raw.githubusercontent.com/bizzkoot/radarr_cleanup/main/radarr_cleanup.py
    ```
 
 ## 🏃 Running the Script
 ```bash
+# Navigate to project folder
+cd ~/radarr_cleanup
+
 # Normal mode
 python3 radarr_cleanup.py
 
