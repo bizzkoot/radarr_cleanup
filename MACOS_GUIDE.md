@@ -9,8 +9,8 @@
 
 2. **Install Python**  
    ```bash
-   brew install python@3.12
-   echo 'export PATH="/opt/homebrew/opt/python@3.12/bin:$PATH"' >> ~/.zshrc
+   brew install python
+   echo 'export PATH="/opt/homebrew/opt/python/bin:$PATH"' >> ~/.zshrc
    source ~/.zshrc
    ```
 
@@ -34,7 +34,6 @@
      "radarr_ip": "localhost",
      "radarr_port": "7878",
      "radarr_api_key": "YOUR_KEY_HERE",
-     "max_runtime_minutes": 120
    }
    ```
    ^O to save, ^X to exit

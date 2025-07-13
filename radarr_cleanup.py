@@ -40,17 +40,17 @@ def main():
     movies = get_movies()
     
     # Filter and display
-    long_movies = [m for m in movies if m['runtime'] > MAX_RUNTIME]
-    print("\nMOVIES EXCEEDING RUNTIME:")
-    for i, movie in enumerate(long_movies):
-        print(f"[{i+1}] {movie['title']} ({movie['year']}) - {movie['runtime']}min")
+    short_movies = [m for m in movies if m['runtime'] < MAX_RUNTIME]
+    print("\nMOVIES UNDER RUNTIME:")
+    for i, movie in enumerate(short_movies):
+        print(f"[{i+1}] {movie['title']} ({movie['year']}) - {movie['runtime']}min (Under {MAX_RUNTIME}min threshold)")
     
     # User selection
     keep = input("\nEnter numbers/titles to KEEP (comma-separated): ").strip().split(',')
-    kept_indices = parse_selection(keep, long_movies)
+    kept_indices = parse_selection(keep, short_movies)
     
     # Prepare deletion list
-    to_delete = [m for i, m in enumerate(long_movies) if i not in kept_indices]
+    to_delete = [m for i, m in enumerate(short_movies) if i not in kept_indices]
     
     # Confirmation
     print("\nMOVIES TO DELETE:")
