@@ -1,3 +1,11 @@
+def validate_input(prompt):
+    while True:
+        user_input = input(prompt).strip().lower()
+        if user_input in ['y', 'n']:
+            return user_input
+        else:
+            print("Invalid input. Please enter 'y' or 'n'.")
+
 import requests
 import json
 import argparse
@@ -153,12 +161,17 @@ def main():
         print(f"\nFound {len(zero_runtime)} movies with 0min runtime (possible metadata errors):")
         for i, movie in enumerate(zero_runtime):
             print(f"[Z{i+1}] {movie['title']} ({movie['year']})")
-        
-        review_zero = input("\nReview these 0min movies? (y/n): ").strip().lower()
+
+        review_zero = validate_input("\nReview these 0min movies? (y/n): ")
         if review_zero == 'y':
             # User selection for 0min movies (ask for deletion instead of keep)
-            delete_zero = input("\nEnter Z-numbers/titles to DELETE (comma-separated): ").strip().split(',')
-            delete_zero_indices = parse_selection(delete_zero, zero_runtime, prefix='Z')
+            while True:
+                delete_zero = input("\nEnter Z-numbers/titles to DELETE (comma-separated): ").strip().split(',')
+                delete_zero_indices = parse_selection(delete_zero, zero_runtime, prefix='Z')
+                if all(i < len(zero_runtime) for i in delete_zero_indices):
+                    break
+                else:
+                    print("Invalid input. Please enter valid Z-numbers/titles.")
             zero_to_delete = [zero_runtime[i] for i in delete_zero_indices]
             
             # Confirmation for 0min deletion
@@ -166,7 +179,7 @@ def main():
                 print("\n0min MOVIES TO DELETE:")
                 for i, movie in enumerate(zero_to_delete):
                     print(f"Z{i+1}. {movie['title']}")
-                if input("Confirm deletion of these 0min movies? (y/n): ").lower() != 'y':
+                if validate_input("Confirm deletion of these 0min movies? (y/n): ") != 'y':
                     zero_to_delete = []
     
     # Handle valid short movies
@@ -175,15 +188,20 @@ def main():
         print(f"\nFound {len(valid_short)} movies under {max_runtime} minutes (excluding 0min):")
         for i, movie in enumerate(valid_short):
             print(f"[{i+1}] {movie['title']} ({movie['year']}) - {movie['runtime']}min")
-        
+
         # User choice: delete all or select?
-        delete_all = input("\nDelete ALL these movies? (y/n): ").strip().lower()
+        delete_all = validate_input("\nDelete ALL these movies? (y/n): ")
         if delete_all == 'y':
             to_delete = valid_short
         else:
             # User selection: which movies to keep
-            keep = input("\nEnter numbers/titles to KEEP (comma-separated): ").strip().split(',')
-            kept_indices = parse_selection(keep, valid_short)
+            while True:
+                keep = input("\nEnter numbers/titles to KEEP (comma-separated): ").strip().split(',')
+                kept_indices = parse_selection(keep, valid_short)
+                if all(i < len(valid_short) for i in kept_indices):
+                    break
+                else:
+                    print("Invalid input. Please enter valid numbers/titles.")
             to_delete = [m for i, m in enumerate(valid_short) if i not in kept_indices]
     
     # Combine deletion lists
@@ -201,8 +219,8 @@ def main():
             print(f"Z{i+1}. {movie['title']} (0min)")
         else:
             print(f"{i+1}. {movie['title']} ({movie['runtime']}min)")
-    
-    if input("\nConfirm deletion of ALL listed movies? (y/n): ").lower() != 'y':
+
+    if validate_input("\nConfirm deletion of ALL listed movies? (y/n): ") != 'y':
         exit()
     
     # Delete movies with dry-run support
@@ -230,9 +248,9 @@ def main():
         f.write("Free: %d GiB" % (free // (2**30)))
     
     verify_deletions([m['id'] for m in to_delete])
-    
+
     # Import exclusion option
-    exclusion_choice = input("\nAdd these movies to import exclusion to prevent re-adding? (y/n): ").strip().lower() == 'y'
+    exclusion_choice = validate_input("\nAdd these movies to import exclusion to prevent re-adding? (y/n): ") == 'y'
     if exclusion_choice:
         if args.dry_run:
             print(f"[DRY RUN] Would add {len(to_delete)} movies to import exclusion list")
