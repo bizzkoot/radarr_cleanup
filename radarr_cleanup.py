@@ -42,6 +42,51 @@ except (FileNotFoundError, json.JSONDecodeError, KeyError, ValueError) as e:
     print("Please check your config.json file and try again.")
     exit(1)
 
+def get_movies():
+    """Fetch all movies from Radarr"""
+    try:
+        response = requests.get(f"{RADARR_URL}/api/v3/movie", headers=HEADERS)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to fetch movies: {e}")
+        exit(1)
+
+def delete_movie(movie_id):
+    """Delete a movie from Radarr"""
+    try:
+        response = requests.delete(f"{RADARR_URL}/api/v3/movie/{movie_id}", headers=HEADERS)
+        response.raise_for_status()
+        return True
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to delete movie: {e}")
+        return False
+
+def parse_selection(selection, movies):
+    """Parse user's selection of movies to keep"""
+    kept_indices = []
+    for item in selection:
+        item = item.strip()
+        if item.isdigit():
+            index = int(item) - 1
+            if 0 <= index < len(movies):
+                kept_indices.append(index)
+        else:
+            for i, movie in enumerate(movies):
+                if item.lower() in movie['title'].lower():
+                    kept_indices.append(i)
+    return list(set(kept_indices))
+
+def verify_deletions(movie_ids):
+    """Verify movies were actually removed"""
+    try:
+        remaining = requests.get(f"{RADARR_URL}/api/v3/movie", headers=HEADERS).json()
+        remaining_ids = {m['id'] for m in remaining}
+        return len(set(movie_ids) - remaining_ids)
+    except requests.exceptions.RequestException as e:
+        print(f"Verification failed: {e}")
+        return 0
+
 def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='Radarr Movie Cleanup Tool')
