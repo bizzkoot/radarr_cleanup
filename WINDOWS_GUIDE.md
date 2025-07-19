@@ -28,7 +28,7 @@
    }
    '@
    ```
-   🔑 Replace YOUR_KEY_HERE with [your Radarr API key](http://localhost:7878/settings/general)
+   🔑 Replace YOUR_KEY_HERE with [your Radarr API key](https://localhost:7878/settings/general)
 
 5. **Download Script**  
    Right-click → Save As:  

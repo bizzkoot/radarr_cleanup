@@ -5,7 +5,7 @@
 ### Critical Requirements
 1. Radarr must be running in Docker
 2. Enable "Host access to custom networks" in Docker settings
-3. Use privileged mode for Docker container
+3. Consider using host networking or setting up a custom Docker network instead of privileged mode for better security.
 
 ## 🛠️ Setup Steps
 

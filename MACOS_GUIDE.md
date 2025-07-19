@@ -44,7 +44,7 @@
    }
    ```
    ^O to save, ^X to exit
-   ⚠️ IMPORTANT: Replace "YOUR_API_KEY_HERE" with your actual Radarr API key
+   ⚠️ IMPORTANT: Replace "YOUR_API_KEY_HERE" with your actual Radarr API key. You can also use other editors like `vim` or create the file graphically.
 
 7. **Download Script**
    ```bash

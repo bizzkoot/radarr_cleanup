@@ -44,13 +44,23 @@ graph TD
     A[Start] --> B[Load Config]
     B --> C[Fetch Movies]
     C --> D{Filter by Runtime}
-    D -->|Long Movies| E[User Selection]
-    D -->|No Matches| F[Exit]
-    E --> G{Confirm Deletion}
-    G -->|Yes| H[Delete Movies]
-    G -->|No| F
-    H --> I[Verify Deletions]
-    I --> J[Generate Report]
+    D -->|Runtime < Max| E{0min Movies?}
+    E -->|Yes| F[Review 0min Movies]
+    F --> G{Delete 0min?}
+    G -->|Yes| H[Delete 0min Movies]
+    G -->|No| I[Valid Short Movies]
+    E -->|No| I[Valid Short Movies]
+    I --> J{Delete All?}
+    J -->|Yes| K[Delete All Short Movies]
+    J -->|No| L[User Selection]
+    L --> M{Confirm Deletion}
+    M -->|Yes| N[Delete Selected Movies]
+    M -->|No| O[Exit]
+    H --> P[Disk Space Report]
+    K --> P
+    N --> P
+    P --> Q[Verify Deletions]
+    Q --> O[Exit]
 ```
 
 ## ✔️ Verification Steps
@@ -66,6 +76,8 @@ graph TD
 | Python Issues | Confirm Python version with `python --version` |
 | Permission Denied | Run with elevated privileges if needed |
 | Unraid Network Issues | Use host network mode for Radarr container |
+| Radarr API Errors | Double-check API key and Radarr URL |
+| Script Fails Silently | Check logs for errors or exceptions |
 
 ## 🤝 Contributing
 1. Fork the repository
