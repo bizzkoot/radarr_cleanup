@@ -47,6 +47,7 @@ python radarr_cleanup.py --dry-run
 | Issue | Fix |
 |-------|-----|
 | "Python not found" | Reinstall with "Add to PATH" checked |
+| JSONDecodeError: Expecting value | Check for invalid quotes (replace “ and ” with ") in config.json |
 | Permission denied | Right-click PowerShell → Run as Administrator |
 | Connection errors | Check Windows Firewall allows Python |
 

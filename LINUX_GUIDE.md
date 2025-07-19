@@ -53,6 +53,7 @@ python3 radarr_cleanup.py --dry-run
 | Issue | Fix |
 |-------|-----|
 | "Permission denied" | `chmod +x radarr_cleanup.py` |
+| JSONDecodeError: Expecting value | Check for invalid quotes (replace “ and ” with ") in config.json |
 | Python version mismatch | Use `python3.12` explicitly |
 | Missing dependencies | `sudo apt install python3.12-venv` |
 

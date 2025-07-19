@@ -71,7 +71,7 @@ python3 radarr_cleanup.py --dry-run
 |-------|-----|
 | "Command not found" | Run `brew doctor` and fix warnings |
 | "source: no such file or directory: venv/bin/activate" | Ensure you're in the same directory where you created the virtual environment |
-| JSONDecodeError: Expecting value | Ensure you've replaced "YOUR_API_KEY_HERE" with your actual API key in config.json |
+| JSONDecodeError: Expecting value | 1. Ensure you've replaced "YOUR_API_KEY_HERE" with your API key<br>2. Check for invalid quotes (replace “ and ” with ") |
 | Python version mismatch | Use `python3` explicitly |
 | Permission denied | `chmod +x radarr_cleanup.py` |
 | ModuleNotFoundError: No module named 'requests' | Ensure `requests` is installed in the correct Python environment using `python3 -m pip install requests` |

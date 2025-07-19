@@ -60,6 +60,7 @@
 | Issue | Solution |
 |-------|----------|
 | Connection refused | Check Docker network mode (bridge/host) |
+| JSONDecodeError: Expecting value | Check for invalid quotes (replace “ and ” with ") in config.json |
 | Permission denied | `chmod -R 777 /mnt/user/appdata/radarr_cleanup` |
 | Missing dependencies | Reinstall NerdPack Python |
 
