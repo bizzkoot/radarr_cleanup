@@ -40,10 +40,11 @@
    {
      "radarr_ip": "localhost",
      "radarr_port": "7878",
-     "radarr_api_key": "YOUR_KEY_HERE"
+     "radarr_api_key": "YOUR_API_KEY_HERE"  // Replace with your actual API key
    }
    ```
    ^O to save, ^X to exit
+   ⚠️ IMPORTANT: Replace "YOUR_API_KEY_HERE" with your actual Radarr API key
 
 7. **Download Script**
    ```bash
@@ -70,6 +71,7 @@ python3 radarr_cleanup.py --dry-run
 |-------|-----|
 | "Command not found" | Run `brew doctor` and fix warnings |
 | "source: no such file or directory: venv/bin/activate" | Ensure you're in the same directory where you created the virtual environment |
+| JSONDecodeError: Expecting value | Ensure you've replaced "YOUR_API_KEY_HERE" with your actual API key in config.json |
 | Python version mismatch | Use `python3` explicitly |
 | Permission denied | `chmod +x radarr_cleanup.py` |
 | ModuleNotFoundError: No module named 'requests' | Ensure `requests` is installed in the correct Python environment using `python3 -m pip install requests` |

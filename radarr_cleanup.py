@@ -20,13 +20,27 @@ def get_log_path():
     log_dir.mkdir(parents=True, exist_ok=True)
     return log_dir / "radarr_cleanup.log"
 
-# Load config using pathlib for cross-platform compatibility
-with open('config.json') as f:
-    config = json.load(f)
+# Load config with validation and error handling
+try:
+    with open('config.json') as f:
+        config = json.load(f)
+    
+    # Validate required fields
+    required_keys = ['radarr_ip', 'radarr_port', 'radarr_api_key']
+    for key in required_keys:
+        if key not in config:
+            raise KeyError(f"Missing required config key: {key}")
+        if config[key] == "YOUR_API_KEY_HERE" and key == "radarr_api_key":
+            raise ValueError("Please replace 'YOUR_API_KEY_HERE' with your actual Radarr API key in config.json")
+    
+    RADARR_URL = f"http://{config['radarr_ip']}:{config['radarr_port']}"
+    API_KEY = config['radarr_api_key']
+    HEADERS = {"X-Api-Key": API_KEY}
 
-RADARR_URL = f"http://{config['radarr_ip']}:{config['radarr_port']}"
-API_KEY = config['radarr_api_key']
-HEADERS = {"X-Api-Key": API_KEY}
+except (FileNotFoundError, json.JSONDecodeError, KeyError, ValueError) as e:
+    print(f"Configuration error: {e}")
+    print("Please check your config.json file and try again.")
+    exit(1)
 
 def main():
     # Parse command line arguments
