@@ -39,7 +39,7 @@
    {
      "radarr_ip": "localhost",
      "radarr_port": "7878",
-     "radarr_api_key": "YOUR_KEY_HERE",
+     "radarr_api_key": "YOUR_KEY_HERE"
    }
    ```
    ^O to save, ^X to exit

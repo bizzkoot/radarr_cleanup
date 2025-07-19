@@ -32,8 +32,7 @@
    {
      "radarr_ip": "radarr",  # Use Docker container name
      "radarr_port": "7878",
-     "radarr_api_key": "YOUR_KEY_HERE",
-     "max_runtime_minutes": 120
+     "radarr_api_key": "YOUR_KEY_HERE"
    }
    ```
 

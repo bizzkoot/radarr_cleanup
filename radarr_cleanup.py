@@ -26,7 +26,6 @@ with open('config.json') as f:
 
 RADARR_URL = f"http://{config['radarr_ip']}:{config['radarr_port']}"
 API_KEY = config['radarr_api_key']
-MAX_RUNTIME = config['max_runtime_minutes']
 HEADERS = {"X-Api-Key": API_KEY}
 
 def main():
@@ -36,25 +35,40 @@ def main():
                        help='Simulate deletion without making changes')
     args = parser.parse_args()
 
+    # Prompt for runtime threshold
+    max_runtime = int(input("Enter the maximum runtime in minutes: "))
+
     # Fetch movies
     movies = get_movies()
     
     # Filter and display
-    short_movies = [m for m in movies if m['runtime'] < MAX_RUNTIME]
-    print("\nMOVIES UNDER RUNTIME:")
+    short_movies = [m for m in movies if m['runtime'] < max_runtime]
+    print(f"\nFound {len(short_movies)} movies under {max_runtime} minutes:")
     for i, movie in enumerate(short_movies):
-        print(f"[{i+1}] {movie['title']} ({movie['year']}) - {movie['runtime']}min (Under {MAX_RUNTIME}min threshold)")
+        print(f"[{i+1}] {movie['title']} ({movie['year']}) - {movie['runtime']}min")
     
-    # User selection
-    keep = input("\nEnter numbers/titles to KEEP (comma-separated): ").strip().split(',')
-    kept_indices = parse_selection(keep, short_movies)
-    
-    # Prepare deletion list
-    to_delete = [m for i, m in enumerate(short_movies) if i not in kept_indices]
+    # Early exit if no movies found
+    if not short_movies:
+        print("No movies to delete.")
+        exit()
+
+    # User choice: delete all or select?
+    delete_all = input("\nDelete ALL these movies? (y/n): ").strip().lower()
+    if delete_all == 'y':
+        to_delete = short_movies
+    else:
+        # User selection: which movies to keep
+        keep = input("\nEnter numbers/titles to KEEP (comma-separated): ").strip().split(',')
+        kept_indices = parse_selection(keep, short_movies)
+        to_delete = [m for i, m in enumerate(short_movies) if i not in kept_indices]
     
     # Confirmation
     print("\nMOVIES TO DELETE:")
-    [print(f"{i+1}. {m['title']}") for i, m in enumerate(to_delete)]
+    for i, movie in enumerate(to_delete):
+        print(f"{i+1}. {movie['title']}")
+    if not to_delete:
+        print("No movies selected for deletion. Exiting.")
+        exit()
     if input("Confirm deletion? (y/n): ").lower() != 'y':
         exit()
     
