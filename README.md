@@ -32,8 +32,7 @@ Create `config.json`:
 {
   "radarr_ip": "localhost",
   "radarr_port": "7878",
-  "radarr_api_key": "your_api_key",
-  "max_runtime_minutes": 120
+  "radarr_api_key": "your_api_key"
 }
 ```
 
