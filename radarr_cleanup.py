@@ -74,9 +74,7 @@ def delete_movie(movie_id):
 def add_import_exclusion(movie):
     """Add movie to Radarr's import exclusion list"""
     payload = {
-        "tmdbId": movie['tmdbId'],
-        "movieTitle": movie['title'],
-        "movieYear": movie['year']
+        "movieId": movie['id']
     }
     try:
         response = requests.post(
@@ -91,29 +89,31 @@ def add_import_exclusion(movie):
         return False
 
 def parse_selection(selection, movies, prefix=''):
-    """Parse user's selection of movies to keep with optional prefix"""
-    kept_indices = []
-    prefix_len = len(prefix)
-    
+    """Parse user's selection of movies, accepting only Z-numbers or numbers"""
+    valid_indices = []
     for item in selection:
         item = item.strip()
-        if item.startswith(prefix) and item[prefix_len:].isdigit():
-            # Handle prefixed indices (like Z1, Z2)
-            index = int(item[prefix_len:]) - 1
-            if 0 <= index < len(movies):
-                kept_indices.append(index)
-        elif item.isdigit():
-            # Handle regular indices
-            index = int(item) - 1
-            if 0 <= index < len(movies):
-                kept_indices.append(index)
-        else:
-            # Handle title matches
-            for i, movie in enumerate(movies):
-                if item.lower() in movie['title'].lower():
-                    kept_indices.append(i)
-    
-    return list(set(kept_indices))
+        if prefix and item.startswith(prefix) and item[len(prefix):].isdigit():
+            # Handle prefixed indices (like Z1, Z2) for 0-min movies
+            try:
+                index = int(item[len(prefix):]) - 1
+                if 0 <= index < len(movies):
+                    valid_indices.append(index)
+            except ValueError:
+                print(f"Invalid input: '{item}'. Please enter valid {'Z-numbers' if prefix else 'numbers'}.")
+
+        elif not prefix and item.isdigit():
+            # Handle regular indices for other movies
+            try:
+                index = int(item) - 1
+                if 0 <= index < len(movies):
+                    valid_indices.append(index)
+            except ValueError:
+                print(f"Invalid input: '{item}'. Please enter valid {'Z-numbers' if prefix else 'numbers'}.")
+        elif item:
+            print(f"Invalid input: '{item}'. Please enter valid {'Z-numbers' if prefix else 'numbers'}.")
+
+    return list(set(valid_indices))
 
 def verify_deletions(movie_ids):
     """Verify movies were actually removed"""
@@ -124,6 +124,18 @@ def verify_deletions(movie_ids):
     except requests.exceptions.RequestException as e:
         print(f"Verification failed: {e}")
         return 0
+
+def get_movie_selections(movies, prompt_type, prefix=''):
+    """Prompts the user for movie selections and returns a list of movies."""
+    while True:
+        prompt = f"Enter {'Z-numbers' if prefix else 'numbers'} to {prompt_type} (comma-separated): "
+        selection = input(prompt).strip().split(',')
+        indices = parse_selection(selection, movies, prefix)
+        if indices and all(0 <= i < len(movies) for i in indices):
+            movie_selections = [movies[i] for i in indices]
+            return movie_selections
+        else:
+            print(f"Invalid input. Please enter valid {'Z-numbers' if prefix else 'numbers'}.")
 
 def main():
     # Parse command line arguments
@@ -165,19 +177,10 @@ def main():
         review_zero = validate_input("\nReview these 0min movies? (y/n): ")
         if review_zero == 'y':
             # User selection for 0min movies (ask for deletion instead of keep)
-            while True:
-                delete_zero = input("\nEnter Z-numbers/titles to DELETE (comma-separated): ").strip().split(',')
-                delete_zero_indices = parse_selection(delete_zero, zero_runtime, prefix='Z')
-                if all(i < len(zero_runtime) for i in delete_zero_indices) and delete_zero:
-                    break
-                else:
-                    print("Invalid input. Please enter valid Z-numbers/titles.")
-                    
-            if delete_zero:
-                zero_to_delete = [zero_runtime[i] for i in delete_zero_indices]
+            zero_to_delete = get_movie_selections(zero_runtime, 'DELETE', 'Z')
 
                 # Confirmation for 0min deletion
-                
+            if zero_to_delete:
                 print("\n0min MOVIES TO DELETE:")
                 for i, movie in enumerate(zero_to_delete):
                     print(f"Z{i+1}. {movie['title']}")
@@ -198,14 +201,8 @@ def main():
             to_delete = valid_short
         else:
             # User selection: which movies to keep
-            while True:
-                keep = input("\nEnter numbers/titles to KEEP (comma-separated): ").strip().split(',')
-                kept_indices = parse_selection(keep, valid_short)
-                if all(i < len(valid_short) for i in kept_indices) and keep:
-                    break
-                else:
-                    print("Invalid input. Please enter valid numbers/titles.")
-            to_delete = [m for i, m in enumerate(valid_short) if i not in kept_indices]
+            keep = get_movie_selections(valid_short, 'KEEP')
+            to_delete = [m for i, m in enumerate(valid_short) if m not in keep]
     
     # Combine deletion lists
     to_delete += zero_to_delete
