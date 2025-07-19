@@ -168,18 +168,21 @@ def main():
             while True:
                 delete_zero = input("\nEnter Z-numbers/titles to DELETE (comma-separated): ").strip().split(',')
                 delete_zero_indices = parse_selection(delete_zero, zero_runtime, prefix='Z')
-                if all(i < len(zero_runtime) for i in delete_zero_indices):
+                if all(i < len(zero_runtime) for i in delete_zero_indices) and delete_zero:
                     break
                 else:
                     print("Invalid input. Please enter valid Z-numbers/titles.")
-            zero_to_delete = [zero_runtime[i] for i in delete_zero_indices]
-            
-            # Confirmation for 0min deletion
-            if zero_to_delete:
+                    
+            if delete_zero:
+                zero_to_delete = [zero_runtime[i] for i in delete_zero_indices]
+
+                # Confirmation for 0min deletion
+                
                 print("\n0min MOVIES TO DELETE:")
                 for i, movie in enumerate(zero_to_delete):
                     print(f"Z{i+1}. {movie['title']}")
-                if validate_input("Confirm deletion of these 0min movies? (y/n): ") != 'y':
+                confirm_zero = validate_input("Confirm deletion of these 0min movies? (y/n): ")
+                if confirm_zero != 'y':
                     zero_to_delete = []
     
     # Handle valid short movies
@@ -198,7 +201,7 @@ def main():
             while True:
                 keep = input("\nEnter numbers/titles to KEEP (comma-separated): ").strip().split(',')
                 kept_indices = parse_selection(keep, valid_short)
-                if all(i < len(valid_short) for i in kept_indices):
+                if all(i < len(valid_short) for i in kept_indices) and keep:
                     break
                 else:
                     print("Invalid input. Please enter valid numbers/titles.")
