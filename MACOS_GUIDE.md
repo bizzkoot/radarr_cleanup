@@ -14,21 +14,22 @@
    source ~/.zshrc
    ```
 
-3. **Create a Virtual Environment**
+3. **Create Project Folder**
+   ```bash
+   mkdir -p ~/radarr_cleanup
+   cd ~/radarr_cleanup
+   ```
+
+4. **Create a Virtual Environment**
    ```bash
    python3 -m venv venv
    source venv/bin/activate
    ```
 
-4. **Install Required Package**
+5. **Install Required Package**
    ```bash
    python3 -m pip install requests
    ```
-
-5. **Create Project Folder**
-   ```bash
-   mkdir -p ~/radarr_cleanup
-   cd ~/radarr_cleanup
 
 6. **Create Configuration File**
    ```bash
@@ -68,6 +69,7 @@ python3 radarr_cleanup.py --dry-run
 | Issue | Fix |
 |-------|-----|
 | "Command not found" | Run `brew doctor` and fix warnings |
+| "source: no such file or directory: venv/bin/activate" | Ensure you're in the same directory where you created the virtual environment |
 | Python version mismatch | Use `python3` explicitly |
 | Permission denied | `chmod +x radarr_cleanup.py` |
 | ModuleNotFoundError: No module named 'requests' | Ensure `requests` is installed in the correct Python environment using `python3 -m pip install requests` |
